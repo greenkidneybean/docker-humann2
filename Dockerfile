@@ -1,9 +1,10 @@
 # Use the biobakery base image
 FROM quay.io/biocontainers/humann2:0.11.2--py27_1
+#FROM continuumio/miniconda3:4.6.14
 
 # Install some prerequisites
 # Add the bucket command wrapper, used to run code via sciluigi
-RUN pip install boto3==1.4.7 awscli==1.11.146 argparse bucket_command_wrapper==0.3.0 
+RUN pip install boto3==1.4.7 awscli==1.11.146 argparse bucket_command_wrapper==0.3.0
 
 # Install the SRA toolkit
 RUN cd /usr/local/bin && \
@@ -29,3 +30,9 @@ ENV LC_ALL C
 
 # Add the run script to the PATH
 ADD run.py /usr/local/bin/
+
+# install databases
+RUN mkdir /databases
+ENV REF_DB /databases
+RUN humann2_databases --download chocophlan full $REF_DB
+RUN humann2_databases --download uniref uniref90_diamond $REF_DB
